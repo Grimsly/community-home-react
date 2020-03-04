@@ -1,0 +1,22 @@
+.App{
+	background-color: gray;
+
+	#communities{
+		display: flex;
+		flex-wrap: wrap;
+		.community{
+			position: relative;
+			margin: 1rem 1rem;
+			height: 20vw;
+			width: 20vw;
+			background-color: white;
+			background-size: cover;
+			background-repeat: no-repeat;
+			.description{
+				position: absolute;
+				bottom: 0.2rem;
+				color: white;
+			}
+		}
+	}
+}

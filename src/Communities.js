@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactModal from 'react-modal'
-import './App.scss';
+import './Communities.scss';
 
 ReactModal.setAppElement('#root');
 
-class App extends React.Component {
+class Communities extends React.Component {
 
 	currentCommunity = {};
 	currentHouses = [];
@@ -33,6 +33,9 @@ class App extends React.Component {
 		this.setState({modalOpen: false});
 	}
 	
+	// When a community is pressed, make sure that the modal window's information correlates to the community.
+	// Updates the app as to what community was pressed on.
+	// Opens the Modal Window after updating
 	updateModal(community, houses){
 		this.currentCommunity = community
 		this.currentHouses = houses
@@ -41,18 +44,22 @@ class App extends React.Component {
 	}
 
   componentDidMount() {
+		// Fetch the communites from the API
     fetch("https://a18fda49-215e-47d1-9dc6-c6136a04a33a.mock.pstmn.io/communities")
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
             communities: result
-          });
+					});
+					
+					// If the GET from the previous fetch was a success, perform another fetch, this time for the houses.
           fetch("https://a18fda49-215e-47d1-9dc6-c6136a04a33a.mock.pstmn.io/homes")
             .then(res => res.json())
             .then(
               (result) => {
                 this.setState({
+									// Set the state of the app to be loaded
                   isLoaded: true,
                   houses: sortHouses(result)
                 });
@@ -61,20 +68,23 @@ class App extends React.Component {
               (error) => {
                 this.setState({
                   isLoaded: true,
-                  error
+                  error: error
                 });
               }
             )
-        },
+				},
+				// Return the error if there was one
         (error) => {
           this.setState({
             isLoaded: true,
-            error
+            error: error
           });
         }
       )
 	}
 	
+	// Creates and return communities in HTML format
+	// When any of the communitees are clicked or pressed on, a modal window will appear to show the listed houses.
 	createCommunity(community, houses){
 		const averagePrice = getAveragePrice(houses);
 	
@@ -100,7 +110,10 @@ class App extends React.Component {
 
   render() {
     const{ error, isLoaded, communities, houses} = this.state;
-    console.log(houses)
+		console.log(houses)
+		
+		// Sort the communites alphabetically
+		// This assumes that the community names are consistent with cases
     communities.sort(function(a, b){
       if (a.name > b.name){
         return 1;
@@ -109,13 +122,16 @@ class App extends React.Component {
       }
     })
 
+		// If an error occured while fetching the API, then the error will be printed
+		// If the fetch is still performing the GET, show a loading screen
+		// When done loading, form the body of the app
     if (error){
-      return <div>Error: {error.message}</div>
+      return <div className="Communities">Error: {error.message}</div>
     }else if (!isLoaded){
-      return <div>Loading...</div>
+      return <div id="loading" className="Communities">Loading...</div>
     }else{
       return(
-        <div className="App">
+        <div className="Communities">
           <h1>Communities</h1>
           <div id="communities">
             {communities.map(community => (
@@ -143,6 +159,9 @@ class App extends React.Component {
 	}
 }
 
+// Checks if the community has houses
+// If it does, then create a list of houses and return the elements
+// If not, then give notice that there are no houses.
 function checkHousesExist(houses){
 	if (houses){
 		return(
@@ -170,6 +189,8 @@ function checkHousesExist(houses){
 	}
 }
 
+// From an array of houses, find the lowest price and the highest
+// If the argument passed in is an undefined, it means that the community has no houses, so return a boolean for notification
 function getAveragePrice(houses){
     console.log(houses)
     if (houses === undefined){
@@ -193,6 +214,10 @@ function getAveragePrice(houses){
     return {houseFound: true, lowest: lowestPrice, highest: highestPrice};
 }
 
+// Sorts the houses by using the community ID
+// Creates a map that uses the community ID as the key
+// Each key's value is an array of houses
+// Returns the map
 function sortHouses(houses){
   let map = new Map();
   for (let house of houses){
@@ -206,4 +231,4 @@ function sortHouses(houses){
   return map;
 }
 
-export default App;
+export default Communities;

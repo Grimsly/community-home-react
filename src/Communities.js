@@ -39,7 +39,6 @@ class Communities extends React.Component {
 	updateModal(community, houses){
 		this.currentCommunity = community
 		this.currentHouses = houses
-		console.log(this.currentCommunity);
 		this.handleOpenModal();
 	}
 
@@ -110,7 +109,6 @@ class Communities extends React.Component {
 
   render() {
     const{ error, isLoaded, communities, houses} = this.state;
-		console.log(houses)
 		
 		// Sort the communites alphabetically
 		// This assumes that the community names are consistent with cases
@@ -192,7 +190,6 @@ function checkHousesExist(houses){
 // From an array of houses, find the lowest price and the highest
 // If the argument passed in is an undefined, it means that the community has no houses, so return a boolean for notification
 function getAveragePrice(houses){
-    console.log(houses)
     if (houses === undefined){
       return {houseFound: false, lowest: 0, highest: 0};
     }

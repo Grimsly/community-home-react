@@ -1,16 +1,44 @@
 import React from 'react';
+import ReactModal from 'react-modal'
 import './App.scss';
 
+ReactModal.setAppElement('#root');
+
 class App extends React.Component {
+
+	currentCommunity = {};
+	currentHouses = [];
+
   constructor(props){
     super(props);
     this.state= {
       error: null,
       isLoaded: false,
       communities: [],
-      houses: new Map()
+      houses: new Map(),
+			modalOpen: false,
+			currentCommunity: {},
+			currentHouses: []
     };
+
+    this.handleOpenModal = this.handleOpenModal.bind(this);
+    this.handleCloseModal = this.handleCloseModal.bind(this);
   }
+
+  handleOpenModal(){
+    this.setState({modalOpen: true});
+  }
+
+  handleCloseModal(){
+		this.setState({modalOpen: false});
+	}
+	
+	updateModal(community, houses){
+		this.currentCommunity = community
+		this.currentHouses = houses
+		console.log(this.currentCommunity);
+		this.handleOpenModal();
+	}
 
   componentDidMount() {
     fetch("https://a18fda49-215e-47d1-9dc6-c6136a04a33a.mock.pstmn.io/communities")
@@ -45,7 +73,30 @@ class App extends React.Component {
           });
         }
       )
-  }
+	}
+	
+	createCommunity(community, houses){
+		const averagePrice = getAveragePrice(houses);
+	
+		return (
+			<div key={community.id} className="community" style={{backgroundImage: "linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(" + community.imgUrl + ")"}} onClick={this.updateModal.bind(this, community, houses)}>
+				<div className="description">
+					<h2>{community.name}</h2>
+					{(() => {
+						if (averagePrice.houseFound === true){
+							if (averagePrice.lowest === averagePrice.highest){
+								return <p>${averagePrice.lowest}</p>
+							}else{
+								return <p>${averagePrice.lowest} - ${averagePrice.highest}</p>
+							}
+						}else{
+							return <p>Prices Not Available</p>
+						}
+					})()}
+				</div>
+			</div>
+		)
+	}
 
   render() {
     const{ error, isLoaded, communities, houses} = this.state;
@@ -65,39 +116,47 @@ class App extends React.Component {
     }else{
       return(
         <div className="App">
+          <h1>Communities</h1>
           <div id="communities">
             {communities.map(community => (
-              createCommunity(community, houses.get(community.id))
+              this.createCommunity(community, houses.get(community.id))
             ))}
           </div>
+
+	
+				<ReactModal
+					isOpen={this.state.modalOpen}
+					contentLabel="onRequestClose houseList"
+					onRequestClose={this.handleCloseModal}
+					className="CommunitySpecifics"
+					overlayClassName="Background"
+				>
+					<button onClick={this.handleCloseModal}>Close Modal</button>
+
+					<h1>{this.currentCommunity.name}</h1>
+					<table class="HouseList">
+						<thead>
+							<tr key="header">
+								<th>Type</th>
+								<th>Area</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							{this.currentHouses.map(house => (
+								<tr key={house.id}>
+									<td>{house.type}</td>
+									<td>{house.area}</td>
+									<td>${house.price}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</ReactModal>  
         </div>
       )
     }
-  }
-}
-
-function createCommunity(community, houses){
-  console.log('adad')
-  const averagePrice = getAveragePrice(houses);
-
-  return (
-    <div key={community.id} className="community" style={{backgroundImage: "url(" + community.imgUrl + ")"}}>
-      <div className="description">
-        <h2>{community.name}</h2>
-        {(() => {
-          if (averagePrice.houseFound === true){
-            if (averagePrice.lowest === averagePrice.highest){
-              return <p>${averagePrice.lowest}</p>
-            }else{
-              return <p>${averagePrice.lowest} - ${averagePrice.highest}</p>
-            }
-          }else{
-            return <p>Prices Not Available</p>
-          }
-        })()}
-      </div>
-    </div>  
-  )
+	}
 }
 
 function getAveragePrice(houses){

@@ -131,31 +131,42 @@ class App extends React.Component {
 					className="CommunitySpecifics"
 					overlayClassName="Background"
 				>
-					<button onClick={this.handleCloseModal}>Close Modal</button>
+					<button className="closeButton" onClick={this.handleCloseModal}>X</button>
 
 					<h1>{this.currentCommunity.name}</h1>
-					<table class="HouseList">
-						<thead>
-							<tr key="header">
-								<th>Type</th>
-								<th>Area</th>
-								<th>Price</th>
-							</tr>
-						</thead>
-						<tbody>
-							{this.currentHouses.map(house => (
-								<tr key={house.id}>
-									<td>{house.type}</td>
-									<td>{house.area}</td>
-									<td>${house.price}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+					{checkHousesExist(this.currentHouses)}
+					
 				</ReactModal>  
         </div>
       )
     }
+	}
+}
+
+function checkHousesExist(houses){
+	if (houses){
+		return(
+			<table className="HouseList">
+				<thead>
+					<tr key="header">
+						<th>Type</th>
+						<th>Area</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+					{houses.map(house => (
+						<tr key={house.id}>
+							<td>{house.type}</td>
+							<td>{house.area}</td>
+							<td>${house.price}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		)
+	}else{
+		return 	(<div>No houses available</div>)
 	}
 }
 

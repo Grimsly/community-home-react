@@ -21,6 +21,21 @@
 			border-radius: 10px;
 			box-shadow: 5px 5px 10px gray;
 			cursor: pointer;
+			
+			@media only screen and (min-width: 600px){
+				height: 35vw;
+				width: 40vw;
+			}
+			
+			@media only screen and (min-width: 1000px){
+				height: 25vw;
+				width: 28vw;
+			}
+
+			@media only screen and (min-width: 1200px){
+				height: 20vw;
+				width: 22vw;
+			}
 
 			.description{
 				position: absolute;
@@ -48,12 +63,70 @@
 	top: 40px;
 	bottom: 40px;
 	right: 40px;
+	padding: 2rem 5vw;
 	background-color: white;
 	outline: none;
 
+	@media only screen and (min-width: 600px){
+		left: 60px;
+		top: 60px;
+		bottom: 60px;
+		right: 60px;
+	}
+
+	@media only screen and (min-width: 1000px){
+		left: 100px;
+		top: 100px;
+		bottom: 100px;
+		right: 100px;
+	}
+
+	.closeButton{
+		position: absolute;
+		font-size: 1.5rem;
+		top: 0.4rem;
+		right: 0.8rem;
+		font-weight: bold;
+		color: black;
+		background: none;
+		border: none;
+		outline: none;
+		transition: color 0.3s;
+
+		&:hover{
+			color: red;
+		}
+	}
 	.HouseList{
-		margin-left: auto;
-		margin-right: auto;
+		border-collapse: collapse;
+		margin-top: 2rem;
+
+		thead{
+			th{
+				text-align: left;
+				padding-bottom: 1rem;
+				@media only screen and (min-width: 600px){
+					font-size: 1.5rem;
+				}
+			}
+		}
+		tbody{
+			tr{
+				border-bottom: 1px solid rgba(0,0,0,0.2);
+			}
+			td{
+				padding-top: 1rem;
+				padding-bottom: 0.5rem;
+				padding-right: 1rem;
+				@media only screen and (min-width: 600px){
+					font-size: 1.2rem;
+					padding-right: 6rem;
+				}
+				&:last-child{
+					padding-right: 0;
+				}
+			}
+		}
 	}
 }
 
